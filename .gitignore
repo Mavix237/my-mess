@@ -1,5 +1,6 @@
 node_modules
 dist
+task classifier/
 tsconfig.tsbuildinfo
 .DS_Store
 *.local
