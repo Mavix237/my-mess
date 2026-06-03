@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { buildContextMenuItems } from "./buildContextMenuItems";
 import { ClockDisplay } from "./components/ClockDisplay";
+import { ContextMenu } from "./components/ContextMenu";
 import { ItemListPanel } from "./components/ItemListPanel";
 import { MindmapCanvas } from "./components/MindmapCanvas";
 import { SaveIndicator } from "./components/SaveIndicator";
 import { Toolbar } from "./components/Toolbar";
 import { ThemePicker } from "./components/ThemePicker";
 import { ZoomControl } from "./components/ZoomControl";
+import type { ContextMenuState } from "./contextMenuState";
 import { useMindmap } from "./hooks/useMindmap";
 import { useTheme } from "./hooks/useTheme";
 import { zoomAtScreenPoint } from "./viewport";
@@ -13,6 +16,7 @@ import styles from "./App.module.css";
 
 export default function App() {
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const {
     mindmap,
     viewport,
@@ -26,6 +30,7 @@ export default function App() {
     deleteNode,
     addCategory,
     addTask,
+    addTaskAt,
     resetView,
     connectNodes,
     removeConnection,
@@ -87,6 +92,56 @@ export default function App() {
 
   const showNodeShadow = (nodeId: string) => focusedNodeId === nodeId;
 
+  const closeContextMenu = useCallback(() => setContextMenu(null), []);
+
+  const openContextMenu = useCallback(
+    (x: number, y: number, target: ContextMenuState["target"]) => {
+      setContextMenu({ x, y, target });
+    },
+    [],
+  );
+
+  const contextMenuItems = useMemo(() => {
+    if (!contextMenu) return [];
+    return buildContextMenuItems(contextMenu.target, {
+      nodes: mindmap.nodes,
+      selectedCategoryId,
+      hasCategory: categories.length > 0,
+      onAddTask: () => addTask(),
+      onAddTaskAt: (pos) => addTaskAt(pos),
+      onAddCategory: addCategory,
+      onResetView: resetView,
+      onToggleList: () => setListOpen((o) => !o),
+      onUndo: handleUndo,
+      onFocusNode: handleFocusNode,
+      onToggleChecked: (id, checked) =>
+        updateNode(id, {
+          checked,
+          ...(checked ? { notesOpen: false } : {}),
+        }),
+      onToggleNotes: (id, open) => updateNode(id, { notesOpen: open }),
+      onDeleteNode: deleteNode,
+      onAddTaskToCategory: (id) => addTask(id),
+      onSelectCategory: handleSelectCategory,
+      onDisconnect: removeConnection,
+    });
+  }, [
+    contextMenu,
+    mindmap.nodes,
+    selectedCategoryId,
+    categories.length,
+    addTask,
+    addTaskAt,
+    addCategory,
+    resetView,
+    handleUndo,
+    handleFocusNode,
+    updateNode,
+    deleteNode,
+    handleSelectCategory,
+    removeConnection,
+  ]);
+
   const handleZoomChange = useCallback(
     (scale: number) => {
       const el = document.querySelector("[data-canvas-viewport]");
@@ -108,7 +163,21 @@ export default function App() {
   );
 
   return (
-    <div className={styles.app}>
+    <div
+      className={styles.app}
+      onContextMenu={(e) => {
+        const el = e.target;
+        if (
+          el instanceof HTMLElement &&
+          el.closest(
+            "input, textarea, [data-zoom], [data-theme-picker], [role='menu']",
+          )
+        ) {
+          return;
+        }
+        e.preventDefault();
+      }}
+    >
       <ClockDisplay />
       <Toolbar
         categories={categories.map((c) => ({ id: c.id, label: c.label }))}
@@ -140,6 +209,15 @@ export default function App() {
       <ZoomControl scale={viewport.scale} onScaleChange={handleZoomChange} />
       <SaveIndicator status={saveStatus} />
 
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={contextMenuItems}
+          onClose={closeContextMenu}
+        />
+      )}
+
       <MindmapCanvas
         nodes={mindmap.nodes}
         connections={mindmap.connections}
@@ -159,6 +237,7 @@ export default function App() {
         onEditStart={handleEditStart}
         onClearFocus={() => setFocusedNodeId(null)}
         showNodeShadow={showNodeShadow}
+        onOpenContextMenu={openContextMenu}
       />
     </div>
   );

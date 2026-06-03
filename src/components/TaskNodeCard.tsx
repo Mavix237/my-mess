@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
   type ClipboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent,
 } from "react";
 import { PLACEHOLDERS } from "../copy";
@@ -30,6 +31,7 @@ type Props = {
   onHoverChange?: (nodeId: string | null) => void;
   onSelectCategory?: (id: string) => void;
   onAddTaskToCategory?: (categoryId: string) => void;
+  onOpenContextMenu?: (e: ReactMouseEvent) => void;
 };
 
 export function TaskNodeCard({
@@ -46,6 +48,7 @@ export function TaskNodeCard({
   onEditStart,
   onSelectCategory,
   onAddTaskToCategory,
+  onOpenContextMenu,
 }: Props) {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -199,6 +202,7 @@ export function TaskNodeCard({
       <article
         className={`${styles.card} ${node.checked ? styles.done : ""}`}
         data-node-id={node.id}
+        onContextMenu={(e) => onOpenContextMenu?.(e)}
         onClick={() => {
           onActivate?.(node.id);
           if (node.isCategory) onSelectCategory?.(node.id);

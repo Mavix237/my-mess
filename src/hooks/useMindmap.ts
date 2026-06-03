@@ -396,6 +396,39 @@ export function useMindmap() {
     [mindmap.nodes, positions, recordUndo, selectedCategoryId],
   );
 
+  const addTaskAt = useCallback(
+    (pos: Vec2, categoryId?: string) => {
+      recordUndo();
+      const catId = categoryId ?? selectedCategoryId;
+      if (!catId) return;
+      const cat = mindmap.nodes.find((n) => n.id === catId);
+      if (!cat?.isCategory) return;
+      const id = uid();
+      setMindmap((prev) => ({
+        nodes: [
+          ...prev.nodes,
+          {
+            id,
+            parentId: cat.id,
+            label: "",
+            checked: false,
+            priority: 3,
+            notes: "",
+            images: [],
+            notesOpen: false,
+            isCategory: false,
+          },
+        ],
+        positions: { ...prev.positions, [id]: pos },
+        connections: [
+          ...prev.connections,
+          { id: uid(), from: cat.id, to: id },
+        ],
+      }));
+    },
+    [mindmap.nodes, recordUndo, selectedCategoryId],
+  );
+
   const resetView = useCallback(() => setViewport(DEFAULT_VIEWPORT), []);
 
   const selectCategory = useCallback((id: string) => {
@@ -480,6 +513,7 @@ export function useMindmap() {
     deleteNode,
     addCategory,
     addTask,
+    addTaskAt,
     resetView,
     connectNodes,
     removeConnection,

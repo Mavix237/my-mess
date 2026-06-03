@@ -4,6 +4,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
@@ -12,6 +13,7 @@ import {
   sideToward,
   type Side,
 } from "../geometry";
+import type { ContextMenuTarget } from "../contextMenuState";
 import type { Connection, TaskNode, Vec2, ViewportState } from "../types";
 import { WORLD_H, WORLD_W } from "../types";
 import { zoomByFactor } from "../viewport";
@@ -66,6 +68,7 @@ type Props = {
   onEditStart: (nodeId: string) => void;
   onClearFocus: () => void;
   showNodeShadow: (nodeId: string) => boolean;
+  onOpenContextMenu: (x: number, y: number, target: ContextMenuTarget) => void;
 };
 
 export function MindmapCanvas({
@@ -87,6 +90,7 @@ export function MindmapCanvas({
   onEditStart,
   onClearFocus,
   showNodeShadow,
+  onOpenContextMenu,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragSession | null>(null);
@@ -451,12 +455,25 @@ export function MindmapCanvas({
 
   const linking = linkDrag !== null;
 
+  const openCanvasMenu = useCallback(
+    (e: ReactMouseEvent) => {
+      if (shouldIgnoreGesture(e.target)) return;
+      e.preventDefault();
+      onOpenContextMenu(e.clientX, e.clientY, {
+        kind: "canvas",
+        worldPos: clientToWorld(e.clientX, e.clientY),
+      });
+    },
+    [clientToWorld, onOpenContextMenu, shouldIgnoreGesture],
+  );
+
   return (
     <div
       ref={containerRef}
       data-canvas-viewport
       className={`${styles.viewport} ${grabbing ? styles.grabbing : ""} ${linking ? styles.linking : ""}`}
       onPointerDown={startPan}
+      onContextMenu={openCanvasMenu}
     >
       <div
         className={styles.world}
@@ -488,6 +505,14 @@ export function MindmapCanvas({
               onClick={(e) => {
                 e.stopPropagation();
                 removeConnection(edge.id);
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onOpenContextMenu(e.clientX, e.clientY, {
+                  kind: "edge",
+                  connectionId: edge.id,
+                });
               }}
             >
               <line
@@ -539,6 +564,14 @@ export function MindmapCanvas({
               onEditStart={() => onEditStart(node.id)}
               onSelectCategory={selectCategory}
               onAddTaskToCategory={addTask}
+              onOpenContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onOpenContextMenu(e.clientX, e.clientY, {
+                  kind: "node",
+                  nodeId: node.id,
+                });
+              }}
             />
           );
         })}
