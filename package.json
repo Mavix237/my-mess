@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "build": "tsc -b && VITE_BASE=/my-mess/ vite build",
+    "preview": "VITE_BASE=/my-mess/ vite preview",
+    "preview:open": "VITE_BASE=/my-mess/ vite preview --open /my-mess/"
   },
   "dependencies": {
     "react": "^19.0.0",

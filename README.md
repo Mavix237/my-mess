@@ -2,21 +2,29 @@
 
 A React mindmap for organizing tasks around a main category. Built with **React 19**, **TypeScript**, and **Vite**.
 
-## Run in the browser
+## Live site (GitHub Pages)
+
+**https://mavix237.github.io/my-mess/**
+
+Pushes to `main` deploy automatically via GitHub Actions. In the repo, open **Settings → Pages** and set **Source** to **GitHub Actions** (one-time setup).
+
+## Run locally in your browser
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (usually http://localhost:5173).
+Open **http://localhost:5173** (hot reload while you edit).
 
-## Build for production
+### Preview a production build locally
 
 ```bash
 npm run build
 npm run preview
 ```
+
+Open **http://localhost:4173/my-mess/** (matches the GitHub Pages path).
 
 ## Stack
 
