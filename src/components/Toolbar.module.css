@@ -1,0 +1,196 @@
+.bar {
+  --toolbar-btn-h: var(--toolbar-h);
+  position: fixed;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: min(96vw, 600px);
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  backdrop-filter: blur(16px);
+  border: var(--border-bold);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  padding: 0 var(--space-1);
+  line-height: 1;
+}
+
+.divider {
+  width: 1px;
+  height: var(--toolbar-btn-h);
+  background: var(--divider);
+  flex-shrink: 0;
+  margin: 0 var(--space-1);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 220px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--toolbar-btn-h);
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink-muted);
+  border: 1px solid transparent;
+  background: var(--paper-deep);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tab:hover:not(.tabActive) {
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-color: transparent;
+}
+
+.tabActive {
+  background: var(--fill-strong);
+  border-color: transparent;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tabActive:hover {
+  background: var(--fill-strong);
+  color: var(--accent);
+  border-color: transparent;
+}
+
+:global([data-theme="night"]) .tabActive,
+:global([data-theme="night"]) .tabActive:hover {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-text);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.iconAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--toolbar-btn-h);
+  height: var(--toolbar-btn-h);
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--icon-btn-bg);
+  color: var(--surface-icon);
+  transition: background 0.15s, color 0.15s;
+}
+
+.iconAction:hover:not(:disabled) {
+  background: var(--icon-btn-bg-hover);
+  color: var(--surface-icon);
+}
+
+.iconAction:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.iconPrimary {
+  background: var(--icon-btn-bg-active);
+  color: var(--tab-active-text, var(--surface-icon));
+}
+
+.iconPrimary:hover:not(:disabled) {
+  background: var(--accent-light);
+  color: var(--tab-active-text, var(--surface-icon));
+}
+
+.iconActive {
+  background: var(--icon-btn-bg-active);
+  color: var(--tab-active-text, var(--surface-icon));
+}
+
+.textAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--toolbar-btn-h);
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--surface-icon);
+  border: none;
+  background: var(--icon-btn-bg);
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.textAction:hover {
+  background: var(--icon-btn-bg-hover);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 520px) {
+  .bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100vw - var(--space-5));
+    padding: var(--space-2);
+    gap: var(--space-2);
+  }
+
+  .tabs {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .divider {
+    margin: 0;
+  }
+}

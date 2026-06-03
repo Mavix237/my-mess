@@ -1,0 +1,68 @@
+.viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: none;
+  background: var(--paper);
+}
+
+.viewport.grabbing {
+  cursor: grabbing;
+}
+
+.world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4000px;
+  height: 4000px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.edgeGroup {
+  pointer-events: visibleStroke;
+  cursor: pointer;
+  outline: none;
+}
+
+.edgeHit {
+  stroke: transparent;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.edge {
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+  opacity: var(--edge-opacity);
+  stroke-linecap: round;
+  stroke-dasharray: 6 5;
+  transition: opacity 0.12s ease, stroke-width 0.12s ease;
+}
+
+.edgeGroup:hover .edge {
+  opacity: calc(var(--edge-opacity) + 0.28);
+  stroke-width: 2;
+}
+
+.edgePreview {
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 6 5;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.viewport.linking {
+  cursor: crosshair;
+}

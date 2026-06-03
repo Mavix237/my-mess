@@ -1,0 +1,45 @@
+.hint {
+  position: fixed;
+  bottom: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 19;
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border: var(--border-muted);
+  pointer-events: none;
+  animation: fadeSave 2.4s ease forwards;
+}
+
+.warn {
+  color: var(--ink-muted);
+  max-width: min(320px, 90vw);
+  text-align: center;
+}
+
+.error {
+  color: #c44;
+  border-color: color-mix(in srgb, #c44 35%, transparent);
+}
+
+@keyframes fadeSave {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  12% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
